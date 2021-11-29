@@ -34,18 +34,6 @@
 		}
 		api.post('hostels', data, $session.jwt);
 	};
-
-	const issueBook = (book, bookForm) => {
-		let issuedTo = bookForm[book];
-		const data = { book, issuedTo };
-		bookForm = {};
-		const date = new Date();
-		data['issuedOn'] = date.toLocaleString();
-		data['issuedBy'] = user.id;
-		data['status'] = 'issued';
-
-		api.post('issues', data, $session.jwt);
-	};
 </script>
 
 <svelte:head>
