@@ -97,7 +97,7 @@
 
 	<label
 		for="my-modal-2"
-		class="btn btn-primary btn-circle btn-md absolute bottom-2 right-2 modal-button"
+		class="btn btn-primary btn-circle btn-md absolute bottom-2 right-5 modal-button"
 	>
 		<Icon icon="bi:plus-lg" width="25" height="25" />
 	</label>
