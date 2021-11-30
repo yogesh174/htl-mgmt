@@ -78,8 +78,8 @@
 									<td>{hostel.blockNumber}</td>
 									<td>{hostel.roomNumber}</td>
 									{#if hostel.allocation && hostel.allocation.status === 'allocated'}
-										<td>{hostel.allocation.allocatedBy.username}</td>
 										<td>{hostel.allocation.allocatedTo.username}</td>
+										<td>{hostel.allocation.allocatedBy.username}</td>
 										<td>{hostel.allocation.allocatedOn}</td>
 									{:else}
 										<td>-</td>
