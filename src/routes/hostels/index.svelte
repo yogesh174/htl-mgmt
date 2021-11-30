@@ -2,7 +2,7 @@
 	export async function load({ session }) {
 		const user = session.user;
 
-		if (!user || user.role.name !== "Admin") {
+		if (!user || user.role.name !== 'Admin') {
 			return {
 				status: 302,
 				redirect: `/login`
@@ -11,8 +11,6 @@
 
 		const data = { user };
 		data.hostels = await api.get('hostels', session.jwt);
-		// if (user.role.name === 'Admin')
-		// 	data.users = await api.get('users', session.jwt);
 		return { props: data };
 	}
 </script>
@@ -21,9 +19,13 @@
 	import { session } from '$app/stores';
 	import * as api from '$lib/api';
 	import Icon from '@iconify/svelte';
-	export let user, hostels;
+	export let hostels;
 
-	const addHostel = () => {
+	import { RingLoader } from 'svelte-loading-spinners';
+	let isLoading = false;
+
+	const addHostel = async () => {
+		isLoading = true;
 		const formElement = document.querySelector('form#add-hostel-form');
 		const formElements = formElement.elements;
 		const data = {};
@@ -32,7 +34,12 @@
 			const currentElement = formElements[i];
 			data[currentElement.name] = currentElement.value;
 		}
-		api.post('hostels', data, $session.jwt);
+
+		const response = await api.post('hostels', data, $session.jwt);
+		if (!response.error) {
+			hostels.push(response);
+		}
+		isLoading = false;
 	};
 </script>
 
@@ -40,7 +47,13 @@
 	<title>Hostels</title>
 </svelte:head>
 
-{#if user.role.name === 'Admin'}
+{#if isLoading}
+	<div class="h-full w-full flex justify-center">
+		<div class="m-auto">
+			<RingLoader size="5" color="#86d2f9" unit="em" duration="2s" />
+		</div>
+	</div>
+{:else}
 	<div class="container my-12 mx-auto px-4 md:px-12">
 		<div class="flex flex-wrap -mx-1 lg:-mx-4 flex-col gap-y-10">
 			{#if hostels.length === 0}
@@ -64,7 +77,7 @@
 									<th>{i + 1}</th>
 									<td>{hostel.blockNumber}</td>
 									<td>{hostel.roomNumber}</td>
-									{#if hostel.allocation && hostel.allocation.status === "allocated"}
+									{#if hostel.allocation && hostel.allocation.status === 'allocated'}
 										<td>{hostel.allocation.allocatedBy.username}</td>
 										<td>{hostel.allocation.allocatedTo.username}</td>
 										<td>{hostel.allocation.allocatedOn}</td>
@@ -84,9 +97,9 @@
 
 	<label
 		for="my-modal-2"
-		class="btn btn-primary btn-circle btn-lg absolute bottom-2 right-2 modal-button"
+		class="btn btn-primary btn-circle btn-md absolute bottom-2 right-2 modal-button"
 	>
-		<Icon icon="bi:plus-lg" width="30" height="30" />
+		<Icon icon="bi:plus-lg" width="25" height="25" />
 	</label>
 
 	<input type="checkbox" id="my-modal-2" class="modal-toggle" />
@@ -120,13 +133,12 @@
 							/>
 						</div>
 					</div>
-
 				</div>
 
 				<div class="modal-action">
-					<button for="my-modal-2" class="btn btn-primary" type="submit">
-						<label for="my-modal-2">Add Hostel</label>
-					</button>
+					<label for="my-modal-2">
+						<button for="my-modal-2" class="btn btn-primary" type="submit"> Add Hostel </button>
+					</label>
 					<label for="my-modal-2" class="btn">Close</label>
 				</div>
 			</form>

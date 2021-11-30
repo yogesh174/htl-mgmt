@@ -18,13 +18,16 @@
 <script>
 	import { session } from '$app/stores';
 	import * as api from '$lib/api';
-	import Icon from '@iconify/svelte';
 	export let user, hostels;
 	let selectedBlock, selectedRoom;
 
+	import { RingLoader } from 'svelte-loading-spinners';
+	let isLoading = false;
+
 	const freeHostels = hostels.filter((hostel) => !hostel.allocation);
 
-	const requestAllocation = () => {
+	const requestAllocation = async () => {
+		isLoading = true;
 		const hostel = freeHostels.filter(
 			(hostel) => hostel.blockNumber == selectedBlock && hostel.roomNumber == selectedRoom
 		)[0];
@@ -38,11 +41,13 @@
 			status: 'vacant'
 		};
 
-		const response = api.post('allocations', data, $session.jwt);
+		const response = await api.post('allocations', data, $session.jwt);
 
-		response.then((data) => {
-			if (!data.error) document.location.reload();
-		});
+		if (!response.error) {
+			allocations.push(response);
+			// document.location.reload();
+		}
+		isLoading = false;
 	};
 
 	const vacate = () => {
@@ -58,7 +63,13 @@
 	<title>Hostel</title>
 </svelte:head>
 
-{#if !user.allocation}
+{#if isLoading}
+	<div class="h-full w-full flex justify-center">
+		<div class="m-auto">
+			<RingLoader size="5" color="#86d2f9" unit="em" duration="2s" />
+		</div>
+	</div>
+{:else if !user.allocation}
 	<form on:submit|preventDefault={requestAllocation} id="request-hostel-form">
 		<div class="px-4 py-5 space-y-6">
 			<h1 class="text-2xl  font-bold">Request Allocation</h1>

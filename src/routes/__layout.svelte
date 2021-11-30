@@ -4,14 +4,20 @@
 	import '../app.css';
 	import { session } from '$app/stores';
 	import { post } from '$lib/utils.js';
+	import { navigating } from '$app/stores';
+	import { RingLoader } from 'svelte-loading-spinners';
+	import { goto } from '$app/navigation';
+	let isLoading = false;
 
 	async function logout() {
-		await post(`auth/logout`);
-		location.reload();
+		isLoading = true;
+		await post(`/auth/logout`);
+		goto('/login');
+		location.reload();	
+		isLoading = false;
 	}
 
 	let user = $session.user;
-	// console.log(user);
 </script>
 
 <main class="flex flex-col h-screen">
@@ -30,10 +36,15 @@
 	{#if user.role.name === 'Student'}
 		<SideBar>
 			<div class="drawer-content">
-				<!-- flex flex-col items-center justify-center  -->
-				<!-- <label for="my-drawer-2" class="mb-4 btn btn-primary drawer-button lg:hidden">open menu</label
-			> -->
-				<slot />
+				{#if $navigating || isLoading}
+					<div class="h-full w-full flex justify-center">
+						<div class="m-auto">
+							<RingLoader size="5" color="#86d2f9" unit="em" duration="2s" />
+						</div>
+					</div>
+				{:else}
+					<slot />
+				{/if}
 			</div>
 
 			<div slot="menu">
@@ -48,10 +59,15 @@
 	{:else if user.role.name === 'Admin'}
 		<SideBar>
 			<div class="drawer-content">
-				<!-- flex flex-col items-center justify-center  -->
-				<!-- <label for="my-drawer-2" class="mb-4 btn btn-primary drawer-button lg:hidden">open menu</label
-			> -->
-				<slot />
+				{#if $navigating || isLoading}
+					<div class="h-full w-full flex justify-center">
+						<div class="m-auto">
+							<RingLoader size="5" color="#86d2f9" unit="em" duration="2s" />
+						</div>
+					</div>
+				{:else}
+					<slot />
+				{/if}
 			</div>
 			<div slot="menu">
 				<li>
@@ -62,6 +78,9 @@
 				</li>
 				<li>
 					<a href="/allocations">Allocations</a>
+				</li>
+				<li>
+					<a href="/users">Users</a>
 				</li>
 			</div>
 		</SideBar>

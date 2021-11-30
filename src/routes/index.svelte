@@ -31,7 +31,7 @@
 			<p>Checkout other products similar to this</p>
 			<ul class="mx-5">
 				<li><a href="https://lib-sys.vercel.app/" class="text-purple-300">Library management system</a></li>
-				<li><a href="http://" class="text-purple-300">Online tutorials</a></li>
+				<li><a href="https://vid-onl.vercel.app/" class="text-purple-300">Online tutorials</a></li>
 			</ul>
 		</div>
 	</div>
