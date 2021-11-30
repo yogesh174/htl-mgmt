@@ -44,8 +44,7 @@
 		const response = await api.post('allocations', data, $session.jwt);
 
 		if (!response.error) {
-			allocations.push(response);
-			// document.location.reload();
+			document.location.reload();
 		}
 		isLoading = false;
 	};
